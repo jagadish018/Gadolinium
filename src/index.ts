@@ -19,3 +19,11 @@ console.log(token);
 
 const decoded = jwt.decode(token);
 console.log(decoded);
+
+try {
+  const verified = jwt.verify(token, scretKey);
+  console.log(verified);
+}
+catch (error) {
+  console.log(error);
+  }  
