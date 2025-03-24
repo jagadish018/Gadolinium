@@ -17,3 +17,5 @@ const token = jwt.sign(payload, scretKey, {
  
 console.log(token);
 
+const decoded = jwt.decode(token);
+console.log(decoded);
