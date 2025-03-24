@@ -1,8 +1,8 @@
 
 import {SignUpWithUsernameAndPasswordError,type SignUpWithUsernameAndPasswordResponseResult,} from "./+type";
 import { prisma } from "../../extras/prisma";
-import {sign , type JwtPayload} from "jsonwebtoken";
-import { jwtSecretKey } from "../../environment";
+import jwt from "jsonwebtoken";
+import { jwtSecretKey } from "../../../environment";
 import { createHash } from "crypto";
 
 export const signUpWithUsernameAndPasswordResponseResult = async (parameters: {
@@ -27,11 +27,12 @@ export const signUpWithUsernameAndPasswordResponseResult = async (parameters: {
       },
     });
       
-      const JwtPayload: JwtPayload = {
-        iss: "atchutha57@gmail.com",
-        sub: user.id,
+      const JwtPayload: jwt.JwtPayload = {
+        iss: "Jagan.4056@gmail.com",
+          sub: user.id,
+        username: user.username,
       };
-      const token = sign(JwtPayload, jwtSecretKey, {
+      const token = jwt.sign(JwtPayload, jwtSecretKey, {
         expiresIn: "30d",
       });
         const result: SignUpWithUsernameAndPasswordResponseResult = {
