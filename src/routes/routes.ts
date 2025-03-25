@@ -4,7 +4,8 @@ import { authenticationRoutes } from "./authentication-routes";
 import { prisma } from "../extras/prisma";
 import { jwtSecretKey } from "../../environment";
 import jwt from "jsonwebtoken";
-import { userRoutes } from "./user";
+import { userRoutes } from "./users-routes";
+import { logger } from "hono/logger";
 
 export const allRoutes = new Hono();
 

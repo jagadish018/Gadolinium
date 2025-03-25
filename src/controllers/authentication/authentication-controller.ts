@@ -11,9 +11,31 @@ import {
   type LoginWithUsernameAndPasswordResponseResult,
 } from "./authentication-types";
 
+export const createPasswordHash = (parameters: {
+  password: string;
+}): string => {
+  return createHash("sha256").update(parameters.password).digest("hex");
+};
 
+const createJWToken = (parameters: {
+  id: string;
+  username: string;
+}): string => {
+  // Generate token
+  const jwtPayload: jwt.JwtPayload = {
+    iss: "https://purpleshorts.co.in",
+    sub: parameters.id,
+    username: parameters.username,
+  };
 
-export const signUpWithUsernameAndPasswordResponseResult = async (parameters: {
+  const token = jwt.sign(jwtPayload, jwtSecretKey, {
+    expiresIn: "30d",
+  });
+
+  return token;
+};
+
+export const signUpWithUsernameAndPassword = async (parameters: {
   username: string;
   password: string;
 }): Promise<SignUpWithUsernameAndPasswordResponseResult> => {
@@ -30,7 +52,7 @@ export const signUpWithUsernameAndPasswordResponseResult = async (parameters: {
 
     const hashedPassword = createPasswordHash({
       password: parameters.password,
-    }); // This is a simple way to hash a password. Do not use this in production.
+    });
 
     const user = await prisma.user.create({
       data: {
@@ -39,18 +61,22 @@ export const signUpWithUsernameAndPasswordResponseResult = async (parameters: {
       },
     });
 
-    const JwtPayload: jwt.JwtPayload = {
-      iss: "Jagan.4056@gmail.com",
+    //Generate Token
+    const jwtPayload: jwt.JwtPayload = {
+      iss: "http://purpleshorts.co.in",
       sub: user.id,
       username: user.username,
     };
-    const token = jwt.sign(JwtPayload, jwtSecretKey, {
+
+    const token = jwt.sign(jwtPayload, jwtSecretKey, {
       expiresIn: "30d",
     });
+
     const result: SignUpWithUsernameAndPasswordResponseResult = {
-      user,
       token,
+      user,
     };
+
     return result;
   } catch (e) {
     console.error(e);
@@ -58,36 +84,34 @@ export const signUpWithUsernameAndPasswordResponseResult = async (parameters: {
   }
 };
 
-const createPasswordHash = (parameters: { password: string }): string => {
-  return createHash("sha256").update(parameters.password).digest("hex");
-};
-
-export const loginWithUsernameAndPasswordResponseResult = async (parameters: {
+export const logInWithUsernameAndPassword = async (parameters: {
   username: string;
   password: string;
 }): Promise<LoginWithUsernameAndPasswordResponseResult> => {
-  createPasswordHash({ password: parameters.password });
+  const passwordHash = createPasswordHash({
+    password: parameters.password,
+  });
+
   const user = await prisma.user.findUnique({
     where: {
       username: parameters.username,
-      password: parameters.password,
+      password: passwordHash,
     },
   });
+
   if (!user) {
     throw LoginWithUsernameAndPasswordError.INCORRECT_USERNAME_OR_PASSWORD;
   }
 
-  const JwtPayload: jwt.JwtPayload = {
-    iss: "Jagan651@gmail.com",
-    sub: user.id,
+  const token = createJWToken({
+    id: user.id,
     username: user.username,
-  };
-  const token = jwt.sign(JwtPayload, jwtSecretKey, {
-    expiresIn: "30d",
   });
+
   const result: LoginWithUsernameAndPasswordResponseResult = {
-    user,
     token,
+    user,
   };
+
   return result;
 };

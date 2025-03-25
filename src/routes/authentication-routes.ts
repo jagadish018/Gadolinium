@@ -4,8 +4,8 @@ import {
   LoginWithUsernameAndPasswordError,
 } from "../controllers/authentication/authentication-types";
 import {
-  signUpWithUsernameAndPasswordResponseResult,
-  loginWithUsernameAndPasswordResponseResult,
+  signUpWithUsernameAndPassword,
+  logInWithUsernameAndPassword,
 } from "../controllers/authentication/authentication-controller";
 import { prisma } from "../extras/prisma";
 
@@ -14,7 +14,7 @@ export const authenticationRoutes = new Hono();
 authenticationRoutes.post("/sign-up", async (c) => {
   try {
     const { username, password } = await c.req.json();
-    const user = await signUpWithUsernameAndPasswordResponseResult({
+    const user = await signUpWithUsernameAndPassword({
       username,
       password,
     });
@@ -48,7 +48,7 @@ authenticationRoutes.post("/sign-up", async (c) => {
 authenticationRoutes.post("/log-in", async (c) => {
   try {
     const { username, password } = await c.req.json();
-    const result = await loginWithUsernameAndPasswordResponseResult({
+    const result = await logInWithUsernameAndPassword({
       username,
       password,
     });
@@ -80,10 +80,3 @@ authenticationRoutes.post("/log-in", async (c) => {
     }
   }
 });
-
-
-
-
-
-     
-
