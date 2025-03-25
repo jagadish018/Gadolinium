@@ -20,10 +20,14 @@ export const signUpWithUsernameAndPasswordResponseResult = async (parameters: {
       throw SignUpWithUsernameAndPasswordError.CONFLICTING_USERNAME;
     }
 
+    const hashedPassword = createHash("sha256")
+      .update(parameters.password)
+      .digest("hex"); // This is a simple way to hash a password. Do not use this in production.
+
     const user = await prisma.user.create({
       data: {
         username: parameters.username,
-        password: parameters.password,
+        password: hashedPassword,
       },
     });
       
