@@ -11,6 +11,8 @@ import {
   type LoginWithUsernameAndPasswordResponseResult,
 } from "./authentication-types";
 
+
+
 export const signUpWithUsernameAndPasswordResponseResult = async (parameters: {
   username: string;
   password: string;
